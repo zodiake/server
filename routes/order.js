@@ -1,20 +1,20 @@
-var express=require('express');
-var router=express.Router();
-var jwt= require('express-jwt');
-var config=require('../config');
+var express = require('express');
+var router = express.Router();
+var jwt = require('express-jwt');
+var config = require('../config');
 
 
 var jwtCheck = jwt({
-  secret: config.secret
+    secret: config.secret
 });
 
 router.use(jwtCheck);
 
-router.post('/',function(req,res){
-	console.log('success');
-	res.json({
-		haha:'haha'
-	})
+router.post('/', function(req, res) {
+    console.log(req.user);
+    res.json({
+        haha: 'haha'
+    })
 });
 
-module.exports=router;
+module.exports = router;
