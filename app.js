@@ -6,10 +6,15 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
 var products = require('./routes/product');
+var user = require('./routes/user');
+var io = require('socket.io');
+var cors = require('cors');
+
 
 var wine = require('./routes/wine');
 var bind = require('./routes/bind');
 var order = require('./routes/order');
+var address = require('./routes/address');
 
 var app = express();
 
@@ -19,11 +24,6 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST');
-    next();
-});
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -32,7 +32,10 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
 app.use('/products', products);
+app.use('/user', user);
+app.use('/address', address);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -65,5 +68,15 @@ app.use(function(err, req, res, next) {
     });
 });
 
-var server = http.createServer(app);
+var server = http.Server(app);
+var io = require('socket.io')(server);
+io.on('connection', function(socket) {
+    console.log("user come in");
+    socket.emit('news', {
+        title: 'world1234'
+    });
+    socket.on('my other event', function(data) {
+        console.log(data);
+    });
+});
 server.listen(3000);
